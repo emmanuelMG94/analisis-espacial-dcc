@@ -1,0 +1,4 @@
+geopandas==0.14.4
+libpysal==4.10.0
+esda==2.5.1
+pandas==2.2.2
