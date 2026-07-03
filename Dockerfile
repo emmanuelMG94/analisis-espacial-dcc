@@ -9,4 +9,5 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY analisis.py .
 COPY validate.py .
+VOLUME /app/output
 CMD ["python", "analisis.py"]
