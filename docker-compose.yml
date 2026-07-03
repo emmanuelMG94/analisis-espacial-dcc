@@ -1,0 +1,7 @@
+services:
+  analisis-espacial:
+    build:
+      context: .
+    image: geoanalysis-cli:dcc
+    volumes:
+      - ./output:/app/output

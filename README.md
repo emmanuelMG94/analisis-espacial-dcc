@@ -115,3 +115,12 @@ analisis-espacial/fase1-cli/
     requirements.txt
     analisis.py
     validate.py
+## 5b. Ejecucion con Docker Compose (alternativa)
+
+Ademas de docker build / docker run, el proyecto incluye un
+docker-compose.yml para levantar el experimento con un solo comando:
+
+    docker compose up --build
+
+Esto construye la imagen y ejecuta el analisis, generando el CSV en la
+carpeta output/ del host, igual que con docker run.
