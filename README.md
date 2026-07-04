@@ -91,7 +91,7 @@ Para desplegar sin reconstruir localmente:
 Un companero puede reproducir este experimento de dos formas:
 
 Opcion A - Clonando el repositorio:
-    git clone https://github.com/USUARIO/analisis-espacial-dcc.git
+    git clone https://github.com/emmanuelMG94/analisis-espacial-dcc.git
     cd analisis-espacial-dcc
     docker build -t geoanalysis-cli:dcc .
     docker run --rm geoanalysis-cli:dcc
