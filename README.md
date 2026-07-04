@@ -53,18 +53,36 @@ El dataset (Columbus, Ohio, 49 observaciones) es un dataset academico
 estandar de estadistica espacial, distribuido dentro de la libreria
 libpysal.examples. No requiere descarga externa ni credenciales.
 
-## 5. Como reproducir el experimento
+## 5. Como ejecutarlo
 
-Requisitos: Docker Desktop instalado y corriendo.
+Requisito unico: Docker Desktop instalado y corriendo.
 
-Construir la imagen:
+### Opcion A - Sin clonar nada, directo desde Docker Hub (mas rapido)
+
+    docker pull emmanuel94/geoanalysis-cli:dcc
+    mkdir output
+    docker run --rm -v ${PWD}/output:/app/output emmanuel94/geoanalysis-cli:dcc
+
+### Opcion B - Clonando el repositorio y construyendo localmente
+
+    git clone https://github.com/emmanuelMG94/analisis-espacial-dcc.git
+    cd analisis-espacial-dcc
     docker build -t geoanalysis-cli:dcc .
-
-Ejecutar el analisis principal:
+    mkdir output
     docker run --rm -v ${PWD}/output:/app/output geoanalysis-cli:dcc
 
-Los resultados se muestran en consola y se exportan a
-output/resultados_moran.csv en tu maquina local.
+### Opcion C - Usando Docker Compose (si ya clonaste el repo)
+
+    docker compose up --build
+
+En cualquiera de las tres opciones, los resultados se muestran en consola
+y se exportan a output/resultados_moran.csv en tu maquina local.
+
+### Correr la validacion
+
+    docker run --rm emmanuel94/geoanalysis-cli:dcc python validate.py
+
+Debe finalizar con el mensaje "VALIDACION EXITOSA".
 
 ## 6. Validacion y pruebas
 
@@ -86,19 +104,7 @@ Para desplegar sin reconstruir localmente:
     docker pull emmanuel94/geoanalysis-cli:dcc
     docker run --rm emmanuel94/geoanalysis-cli:dcc
 
-## 8. Instrucciones para revision por pares
 
-Un companero puede reproducir este experimento de dos formas:
-
-Opcion A - Clonando el repositorio:
-    git clone https://github.com/emmanuelMG94/analisis-espacial-dcc.git
-    cd analisis-espacial-dcc
-    docker build -t geoanalysis-cli:dcc .
-    docker run --rm geoanalysis-cli:dcc
-
-Opcion B - Usando la imagen publicada en Docker Hub (mas rapido):
-    docker pull emmanuel94/geoanalysis-cli:dcc
-    docker run --rm emmanuel94/geoanalysis-cli:dcc
 
 Que debe verificar el revisor:
 1. Que el analisis muestre 49 observaciones cargadas.
@@ -146,7 +152,7 @@ ligeramente entre ejecuciones por depender de simulaciones aleatorias).
 Estos valores deben salirle identicos a cualquier companero, sin importar
 su maquina o cuantas veces ejecute el experimento, porque son el resultado
 de una formula matematica aplicada sobre datos que no cambian. Si a
-alguien le sale un valor distinto en estos observables, es señal de un
+alguien le sale un valor distinto en estos observables, es se al de un
 error real de reproduccion (version de libreria distinta, dataset
 corrupto, o algun cambio en mi codigo), no una variacion normal.
 
