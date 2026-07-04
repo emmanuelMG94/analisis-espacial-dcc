@@ -124,3 +124,69 @@ docker-compose.yml para levantar el experimento con un solo comando:
 
 Esto construye la imagen y ejecuta el analisis, generando el CSV en la
 carpeta output/ del host, igual que con docker run.
+
+## 10. Observables del experimento
+
+En esta seccion describo que debe observar un companero al reproducir mi
+experimento, distinguiendo entre resultados deterministicos (deben ser
+identicos en cualquier ejecucion) y resultados estocasticos (varian
+ligeramente entre ejecuciones por depender de simulaciones aleatorias).
+
+### Observables deterministicos (deben coincidir exactamente)
+
+| Observable | Contexto / que representa | Resultado esperado |
+|---|---|---|
+| Numero de observaciones | Filas del dataset Columbus, OH cargadas | 49 |
+| Media de CRIME | Promedio de criminalidad residencial | 35.1288 |
+| Media de HOVAL | Promedio de valor de vivienda | 38.4362 |
+| Moran I de CRIME | Grado de autocorrelacion espacial de la criminalidad. Es un calculo directo sobre datos fijos con matriz de pesos Queen, no depende de aleatoriedad. | 0.5002 |
+| Moran I de HOVAL | Grado de autocorrelacion espacial del valor de vivienda. Mismo tipo de calculo directo. | 0.1801 |
+| Valor esperado bajo H0 (EI) | Valor teorico de Moran I si no existiera autocorrelacion espacial | -0.0208 |
+
+Estos valores deben salirle identicos a cualquier companero, sin importar
+su maquina o cuantas veces ejecute el experimento, porque son el resultado
+de una formula matematica aplicada sobre datos que no cambian. Si a
+alguien le sale un valor distinto en estos observables, es señal de un
+error real de reproduccion (version de libreria distinta, dataset
+corrupto, o algun cambio en mi codigo), no una variacion normal.
+
+### Observables estocasticos (varian ligeramente entre ejecuciones)
+
+| Observable | Contexto / que representa | Rango esperado |
+|---|---|---|
+| z-score de CRIME | Significancia estadistica del Moran I, calculada con un test de permutaciones aleatorias (999 simulaciones por defecto en esda) | Aproximadamente entre 4.5 y 6.0 |
+| p-valor (p_sim) de CRIME | Probabilidad de que el patron espacial observado se deba al puro azar | Tipicamente 0.001 a 0.01 (siempre menor a 0.05, es decir, significativo) |
+| z-score de HOVAL | Mismo test de permutaciones aplicado a HOVAL | Aproximadamente entre 1.8 y 2.5 |
+| p-valor (p_sim) de HOVAL | Significancia estadistica de la autocorrelacion en HOVAL | Tipicamente 0.01 a 0.03 (significativo, pero mas debil que CRIME) |
+
+Estos numeros cambian en cada corrida porque el test de significancia usa
+permutaciones aleatorias de los datos (simulacion de Monte Carlo) para
+estimar que tan improbable es el patron observado respecto al azar. Esta
+variacion es esperada y no significa que algo este mal, mientras el valor
+se mantenga dentro del rango razonable y la conclusion final (significativo
+o no) no cambie.
+
+Corri mi propio experimento varias veces para comprobar esto:
+
+| Ejecucion | Moran I (CRIME) | z-score (CRIME) | p-valor (CRIME) |
+|---|---|---|---|
+| 1 | 0.5002 | 5.7496 | 0.0010 |
+| 2 | 0.5002 | 5.6168 | 0.0010 |
+| 3 | 0.5002 | 5.3680 | 0.0010 |
+| 4 | 0.5002 | 5.6036 | 0.0010 |
+
+Como se ve, mi Moran I se mantuvo identico en las cuatro corridas, mientras
+que el z-score vario cada vez por la aleatoriedad de la simulacion, sin
+que eso afectara la conclusion final del analisis.
+
+### Reporte en el foro de debate:
+
+1. El valor de Moran I que obtuvo para CRIME y HOVAL (debe coincidir con
+   el que yo reporto arriba).
+2. El z-score y p-valor que le salieron (pueden diferir un poco de los
+   mios, y explico por que: son permutaciones aleatorias).
+3. Si la conclusion final (existe o no existe autocorrelacion espacial
+   significativa) le coincidio con la que yo reporte.
+4. Cualquier diferencia en los observables deterministicos, indicando su
+   sistema operativo y version de Docker, para que pueda investigar la
+   causa.
